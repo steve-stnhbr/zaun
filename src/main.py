@@ -91,9 +91,9 @@ def get_health():
 def get_status(identifier):
     redis_data = redis_client.hgetall(identifier)
     if redis_data:
-        return jsonify(GetStatusResponseSchema().load(redis_data)), 200
+        return jsonify({'success':True, 'data':redis_data}), 200
     else:
-        return jsonify(GetStatusResponseSchema(success=False, message="Status not found", data=None).data), 404
+        return jsonify({'success':False, 'message':"Status not found", 'data':None}), 404
 
 @app.route('/status/<identifier>', methods=['PUT'])
 async def put_status(identifier):
