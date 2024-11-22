@@ -77,7 +77,7 @@ async def authenticate():
 async def prefix_identifier():
     # Create a copy of the view args to modify
     if request.view_args and 'identifier' in request.view_args:
-        request.view_args['identifier'] = f"person:{request.view_args['identifier']}"
+        request.view_args['identifier'] = f"person:{request.view_args['identifier'].lower()}"
 
 @app.before_serving
 async def startup():
@@ -98,6 +98,7 @@ def get_status(identifier):
 @app.route('/status/<identifier>', methods=['PUT'])
 async def put_status(identifier):
     body = await request.json
+    print(body)
     # Validate request
     schema = PutStatusRequestSchema()
     
