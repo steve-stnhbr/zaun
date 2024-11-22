@@ -8,7 +8,9 @@ services:
       dockerfile: Dockerfile
     volumes:
       - ./src:/app
-      - ${PWD}/.env:/app/.env:ro
+      - type: bind
+        source: .env
+        target: /app/.env
     ports:
       - "8080:8080"
     environment:
