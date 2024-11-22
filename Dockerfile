@@ -16,4 +16,4 @@ RUN chmod +x /usr/local/bin/python
 EXPOSE 8080
 
 # Command to run the Quart app
-CMD python /app/main.py
+CMD python /app/src/main.py
