@@ -47,7 +47,7 @@ TADO_EMAIL = os.getenv('TADO_EMAIL')
 TADO_PASSWORD = os.getenv('TADO_PASSWORD')
 TADO_CLIENT_SECRET = os.getenv('TADO_CLIENT_SECRET')
 
-print(f"Starting server with\n\tREDIS_PORT: {REDIS_PORT}\n\tREDIS_HOST:{REDIS_HOST}\n\tTADO_EMAIL:{TADO_EMAIL}\n\tTADO_CLIENT_SECRET:{TADO_CLIENT_SECRET}")
+print(f"Starting server with\n\tREDIS_PORT: {REDIS_PORT}\n\tREDIS_HOST:{REDIS_HOST}")
 
 redis_client = redis.Redis(host=REDIS_HOST, port=REDIS_PORT, password=REDIS_PASSWORD, decode_responses=True)
 try:
@@ -145,10 +145,20 @@ def get_statuses():
     
     return jsonify({'success': True, 'data': { 'names': list(names) }}), 200
 
+@app.route('/zone_state', methods=['GET'])
+def get_zone_state():
+    return jsonify({'success':True, 'data':{'zone_state': temperature_client.is_in_heating_mode()}}), 200
+
+@app.route('/current_temperature', methods=['GET'])
+def get_current_temperature():
+    return jsonify({'success':True, 'data':{'current_temperature': temperature_client.get_current_temperature()}}), 200
+
 async def update_temperature() -> int:
     print("Updating temperature...")
     temperature = calculate_temperature()
     print("Setting temperature to: %s" % temperature)
+    if not temperature_client.is_in_heating_mode():
+        return temperature_client.get_temperature()
     try:
         temperature_client.set_temperature(temperature)
     except requests.exceptions.HTTPError as http_err:
